@@ -5,7 +5,7 @@ import settings
 
 
 def connect(collection):
-    client = MongoClient()
+    client = MongoClient(host="mongodbhost")
     d = client[settings.MONGO_DATABASE]
     return d[collection]
 

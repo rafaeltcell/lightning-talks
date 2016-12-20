@@ -1,0 +1,38 @@
+version: '2'
+services:
+  mongodbhost:
+    image: mongo:3.3.5
+    ports:
+      - "27017:27017"
+
+  web:
+    build: .
+    command: python app.py
+    volumes:
+      - .:/app
+    ports:
+      - "8002:8002"
+    links:
+      - mongodbhost
+
+  tcell_web:
+    build: .
+    command: tcell_agent run python app.py
+    volumes:
+      - .:/app
+    ports:
+      - "8002:8002"
+    links:
+      - mongodbhost
+
+  tcell_local_web:
+    build: .
+    command: sh -c "pip install --upgrade /tcellagent_src && tcell_agent run python app.py"
+    volumes:
+      - ../pythonagent-tcell:/tcellagent_src
+      - .:/app
+    ports:
+      - "8002:8002"
+    links:
+      - mongodbhost
+
