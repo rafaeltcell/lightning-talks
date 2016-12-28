@@ -5,7 +5,7 @@ import json
 import os
 import random
 
-from flask import Flask, make_response, render_template
+from flask import Flask, make_response, render_template, session
 from pymongo import MongoClient
 
 import models
@@ -13,6 +13,10 @@ import settings
 import utils
 
 app = Flask(__name__)
+
+@app.route('/response-size/<length>', methods=['GET', 'POST'])
+def response_size(length):
+    return 'a' * int(length)
 
 def tally():
     models.Session.tally()
@@ -22,6 +26,12 @@ def tally():
 
 @app.route('/')
 def index():
+    try:
+        print(session)
+        print(session)
+        print(session)
+    except Exception as e:
+        print(e)
     sessions = utils.connect('session').find({})
     payload = []
 
@@ -204,6 +214,17 @@ def user_action(methods=['GET']):
 
 #     session = dict(utils.connect('session').find_one({"_id": _id}))
 #     return json.dumps(session)
+
+# Fake Blueprint
+from flask import Blueprint
+
+admin = Blueprint('admin', __name__)
+
+@admin.route('/greeting')
+def greeting():
+    return 'Hello, administrative user!'
+
+app.register_blueprint(admin, url_prefix='/admin')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
